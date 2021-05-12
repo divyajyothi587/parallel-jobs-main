@@ -1,0 +1,40 @@
+- job-template:
+    # default variable
+    disable_job: false
+    job_description: 'Do not edit this job through the web....!!!'
+    trigger_branch: 'master,main'
+    git_repo_url: ${scmUrl}
+    git_credentials_id: 'e322970b-5053-4f54-8b84-3c6f1f3ad32a'
+    job_folder: 'customer_cicd'
+    # job configuration
+    name: '{job_folder}/{customer}'
+    id: 'branch-pipeline'
+    description: '{job_description}'
+    display-name: '{customer}'
+    periodic-folder-trigger: '1m'
+    project-type: multibranch
+    number-to-keep: '10'
+    script-path: Jenkinsfile
+    disabled: '{disable_job}'
+    scm:
+      - git:
+          url: '{git_repo_url}'
+          credentials-id: '{git_credentials_id}'
+          discover-tags: false
+          build-strategies:
+            - all-strategies-match:
+                strategies:
+                  - regular-branches: true
+          property-strategies:
+            named-branches:
+              defaults:
+                - suppress-scm-triggering: true
+              exceptions:
+                - exception:
+                    branch-name: '{trigger_branch}'
+                    properties:
+                      - suppress-scm-triggering: false
+
+- job:
+    name: customer_cicd
+    project-type: folder

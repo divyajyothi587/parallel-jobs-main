@@ -1,0 +1,65 @@
+# [START cloudbuild]
+steps:
+
+# building docker image customer 1
+- name: 'gcr.io/cloud-builders/docker'
+  id: Build Customer 1
+  args:
+    - 'build'
+    - '-t'
+    - '${_IMAGE_NAME}:${BRANCH_NAME}'
+    - '-f'
+    - './dockerfiles/${_CUSTOMER}/Dockerfile'
+    - './dockerfiles/${_CUSTOMER}'
+  env:
+    - '_CUSTOMER=customer_1'
+    - '_IMAGE_NAME=${_IMAGE_PREFIX}/${_CUSTOMER}'
+  waitFor: ['-']
+
+# building docker image customer 2
+- name: 'gcr.io/cloud-builders/docker'
+  id: Build Customer 2
+  args:
+    - 'build'
+    - '-t'
+    - '${_IMAGE_NAME}:${BRANCH_NAME}'
+    - '-f'
+    - './dockerfiles/${_CUSTOMER}/Dockerfile'
+    - './dockerfiles/${_CUSTOMER}'
+  env:
+    - '_CUSTOMER=customer_2'
+    - '_IMAGE_NAME=${_IMAGE_PREFIX}/${_CUSTOMER}'
+  waitFor: ['-']
+
+# building docker image customer 3
+- name: 'gcr.io/cloud-builders/docker'
+  id: Build Customer 3
+  args:
+    - 'build'
+    - '-t'
+    - '${_IMAGE_NAME}:${BRANCH_NAME}'
+    - '-f'
+    - './dockerfiles/${_CUSTOMER}/Dockerfile'
+    - './dockerfiles/${_CUSTOMER}'
+  env:
+    - '_CUSTOMER=customer_3'
+    - '_IMAGE_NAME=${_IMAGE_PREFIX}/${_CUSTOMER}'
+  waitFor: ['-']
+
+# pushing to the registry
+- name: 'gcr.io/cloud-builders/docker'
+  id: Push Image for all Customers
+  args:
+    - 'push'
+    - '${_IMAGE_PREFIX}/customer_1:${BRANCH_NAME}'
+    - '${_IMAGE_PREFIX}/customer_2:${BRANCH_NAME}'
+    - '${_IMAGE_PREFIX}/customer_3:${BRANCH_NAME}'
+  env:
+    - '_IMAGE_PREFIX=${_IMAGE_PREFIX}'
+  waitFor: ['Build Customer 1', 'Build Customer 2', 'Build Customer 3']
+
+
+substitutions:
+  _IMAGE_PREFIX: gcr.io/${PROJECT_ID}
+
+# [END cloudbuild]

@@ -1,0 +1,12 @@
+- project:
+    name: my_project
+    customer:
+        - ubuntu:
+            disable_job: true
+            trigger_branch: 'master,main,develop'
+            job_description: 'pipeline job for ubuntu deployment'
+        - centos
+        - redhat
+        - debian
+    jobs:
+        - branch-pipeline
